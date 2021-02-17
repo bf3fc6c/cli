@@ -2,7 +2,7 @@
 
 { # this ensures the entire script is downloaded #
 
-BINARY_DEST="$HOME/bin"
+BINARY_DEST="${1:-$HOME/bin}"
 BINARY_NAME="rhoas"
 SRC_ORG="bf3fc6c"
 SRC_REPO="cli"
