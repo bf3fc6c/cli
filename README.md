@@ -25,6 +25,6 @@ Run `make` once to install the program to your path.
 
 ## Running
 
-Run `bf3-uploader` to run the program. Once completed, confirm that the release has been copied at https://github.com/bf3fc6c/cli/releases/tag/latest.
+Run `bf3-uploader` to run the program. Once completed, confirm that the release has been copied at https://github.com/bf3fc6c/cli/releases.
 
 
