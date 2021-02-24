@@ -2,7 +2,7 @@
 
 { # this ensures the entire script is downloaded #
 
-BINARY_DEST="${1:-$HOME/bin}"
+BINARY_DEST="${1:-/usr/local/bin}"
 BINARY_NAME="rhoas"
 SRC_ORG="bf3fc6c"
 SRC_REPO="cli"
@@ -68,6 +68,4 @@ cp "${ASSET_NAME}/bin/${BINARY_NAME}" "${BINARY_DEST}/${BINARY_NAME}"
 echo "$BINARY_DEST"
 
 echo "$BINARY_NAME v$LATEST_TAG"
-echo
-echo "Please ensure that $BINARY_DEST is on your PATH"
 } # this ensures the entire script is downloaded #

@@ -98,8 +98,8 @@ func downloadAssets(assets []*github.ReleaseAsset) error {
 		defer rc.Close()
 
 		// Create the file
-		out, err := os.Create(filepath.Join("./assets", asset.GetName()))
-		fmt.Fprintln(os.Stderr, "Downloaded", asset.GetName(), "to ./assets")
+		out, err := os.Create(filepath.Join("/tmp", asset.GetName()))
+		fmt.Fprintln(os.Stderr, "Downloaded", asset.GetName(), "to /tmp")
 
 		if err != nil {
 			return err
@@ -122,7 +122,7 @@ func uploadAssets(assets []*github.ReleaseAsset, releaseID int64) error {
 		defer rc.Close()
 
 		// Create the file
-		out, err := os.Open(filepath.Join("./assets", asset.GetName()))
+		out, err := os.Open(filepath.Join("/tmp", asset.GetName()))
 
 		if err != nil {
 			return err
