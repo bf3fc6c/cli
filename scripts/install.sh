@@ -2,7 +2,28 @@
 
 { # this ensures the entire script is downloaded #
 
-BINARY_DEST="${2:-/usr/local/bin}"
+BINARY_DEST="${BINARY_DEST:-/usr/local/bin}"
+RELEASE_TAG="${RELEASE_TAG:-latest}"
+
+# set argument values
+# -v = version
+# -p = path
+while getopts ":t:p:" opt; do
+  case $opt in
+    t) RELEASE_TAG="${OPTARG}"
+    ;;
+    p) BINARY_DEST="${OPTARG}"
+    ;;
+    \?) echo "Invalid option -$OPTARG" >&2
+    ;;
+  esac
+done
+
+
+echo $BINARY_DEST
+echo $RELEASE_TAG
+exit 0
+
 BINARY_NAME="rhoas"
 SRC_ORG="bf3fc6c"
 SRC_REPO="cli"
@@ -40,7 +61,6 @@ fi
 if [ ! -d "$BINARY_DEST" ]; then
   mkdir "$BINARY_DEST"
 fi
-
 
 DOWNLOAD_TAG=$(curl -s "${API_RELEASE_URL}" \
 | grep "tag_name.*" \
