@@ -2,7 +2,6 @@
 
 { # this ensures the entire script is downloaded #
 
-BINARY_DEST="${2:-/usr/local/bin}"
 BINARY_NAME="rhoas"
 SRC_ORG="bf3fc6c"
 SRC_REPO="cli"
@@ -12,6 +11,7 @@ RELEASE_TAG="${1:-latest}"
 API_BASE_URL="https://api.github.com"
 API_RELEASES_BASE_URL="${API_BASE_URL}/repos/${SRC_ORG}/${SRC_REPO}/releases"
 DOWNLOAD_DIR="/tmp"
+BINARY_DEST="$HOME/.local/bin"
 
 API_RELEASE_URL="$API_RELEASES_BASE_URL/latest"
 if [ "$RELEASE_TAG" != "latest" ]; then
@@ -27,9 +27,10 @@ source_file() {
   source "$1" 2> /dev/null
 }
 
-# get OS type
+# update config based on OS type
 if [[ "$OSTYPE" == "darwin"* ]]; then
   OS_TYPE="macOS"
+  BINARY_DEST="$HOME/bin"
 fi
 
 if ! has_in_path "curl"; then
@@ -38,9 +39,8 @@ if ! has_in_path "curl"; then
 fi
 
 if [ ! -d "$BINARY_DEST" ]; then
-  mkdir "$BINARY_DEST"
+  mkdir -p "$BINARY_DEST"
 fi
-
 
 DOWNLOAD_TAG=$(curl -s "${API_RELEASE_URL}" \
 | grep "tag_name.*" \
@@ -72,9 +72,9 @@ fi
 echo "$BINARY_NAME v${DOWNLOAD_TAG} downloaded"
 
 # unpack and place the binary in the users PATH
-tar xvf "$ASSET_NAME_COMPRESSED"
-rm -rf "${ASSET_NAME_COMPRESSED}"
+tar xf "$ASSET_NAME_COMPRESSED"
 cp "${ASSET_NAME}/bin/${BINARY_NAME}" "${BINARY_DEST}/${BINARY_NAME}"
 
-echo "$BINARY_NAME v$DOWNLOAD_TAG"
+echo "rhoas has been installed succesfully to $BINARY_DEST"
+echo "Please ensure that $BINARY_DEST is on your PATH"
 } # this ensures the entire script is downloaded #
