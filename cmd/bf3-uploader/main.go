@@ -57,6 +57,10 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if (len(latestRelease.Assets) < 6) {
+		log.Fatal("Release assets have not finished uploading. Try again shortly.")
+	}
+
 	releaseExists := currentRelease.GetTagName() == latestRelease.GetTagName()
 	if releaseExists {
 		fmt.Fprintln(os.Stderr, currentRelease.GetTagName(), " tag already exists in this project")
