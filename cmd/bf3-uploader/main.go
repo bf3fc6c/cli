@@ -57,7 +57,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if (len(latestRelease.Assets) < 6) {
+	if len(latestRelease.Assets) < 6 {
 		log.Fatal("Release assets have not finished uploading. Try again shortly.")
 	}
 
@@ -72,12 +72,13 @@ func main() {
 			log.Fatal(err)
 		}
 		fmt.Fprintln(os.Stderr, "Release", newRelease.GetTagName(), "created")
-		err = downloadAssets(latestRelease.Assets)
+		tmpDownloadDir := getDownloadDir(newRelease.GetTagName())
+		err = downloadAssets(latestRelease.Assets, tmpDownloadDir)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		err = uploadAssets(latestRelease.Assets, newRelease.GetID())
+		err = uploadAssets(latestRelease.Assets, newRelease.GetID(), tmpDownloadDir)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -93,7 +94,7 @@ func createRelease(release *github.RepositoryRelease) (*github.RepositoryRelease
 	return newRelease, err
 }
 
-func downloadAssets(assets []*github.ReleaseAsset) error {
+func downloadAssets(assets []*github.ReleaseAsset, toDir string) error {
 	for _, asset := range assets {
 		rc, _, err := gh.Repositories.DownloadReleaseAsset(context.Background(), cloneFromOrg, cloneFromRepo, asset.GetID(), http.DefaultClient)
 		if err != nil {
@@ -102,8 +103,8 @@ func downloadAssets(assets []*github.ReleaseAsset) error {
 		defer rc.Close()
 
 		// Create the file
-		out, err := os.Create(filepath.Join("/tmp", asset.GetName()))
-		fmt.Fprintln(os.Stderr, "Downloaded", asset.GetName(), "to /tmp")
+		out, err := os.Create(filepath.Join(toDir, asset.GetName()))
+		fmt.Fprintln(os.Stderr, "Downloaded", asset.GetName(), "to "+toDir)
 
 		if err != nil {
 			return err
@@ -117,7 +118,7 @@ func downloadAssets(assets []*github.ReleaseAsset) error {
 	return nil
 }
 
-func uploadAssets(assets []*github.ReleaseAsset, releaseID int64) error {
+func uploadAssets(assets []*github.ReleaseAsset, releaseID int64, fromDir string) error {
 	for _, asset := range assets {
 		rc, _, err := gh.Repositories.DownloadReleaseAsset(context.Background(), cloneFromOrg, cloneFromRepo, asset.GetID(), http.DefaultClient)
 		if err != nil {
@@ -126,7 +127,7 @@ func uploadAssets(assets []*github.ReleaseAsset, releaseID int64) error {
 		defer rc.Close()
 
 		// Create the file
-		out, err := os.Open(filepath.Join("/tmp", asset.GetName()))
+		out, err := os.Open(filepath.Join(fromDir, asset.GetName()))
 
 		if err != nil {
 			return err
@@ -146,4 +147,8 @@ func uploadAssets(assets []*github.ReleaseAsset, releaseID int64) error {
 	}
 
 	return nil
+}
+
+func getDownloadDir(version string) string {
+	return "/tmp"
 }
