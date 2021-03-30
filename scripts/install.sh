@@ -42,8 +42,6 @@
     mkdir -p "$BINARY_DEST"
   fi
 
-  echo $API_RELEASE_URL
-
   DOWNLOAD_TAG=$(curl -s "${API_RELEASE_URL}" |
     grep "tag_name.*" |
     cut -d '"' -f 4)
@@ -61,8 +59,6 @@
     cut -d '"' -f 4)
 
   cd "$DOWNLOAD_DIR" || exit
-
-  echo $DOWNLOAD_URL
 
   echo "Downloading $BINARY_NAME v${DOWNLOAD_TAG}"
   if curl -sL "$DOWNLOAD_URL" --output "${ASSET_NAME_COMPRESSED}"; then
