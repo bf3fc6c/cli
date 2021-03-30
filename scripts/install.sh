@@ -42,6 +42,8 @@
     mkdir -p "$BINARY_DEST"
   fi
 
+  echo $API_RELEASE_URL
+
   DOWNLOAD_TAG=$(curl -s "${API_RELEASE_URL}" |
     grep "tag_name.*" |
     cut -d '"' -f 4)
@@ -60,20 +62,25 @@
 
   cd "$DOWNLOAD_DIR" || exit
 
-  # wget is faster, use it to download the release if available
-  if has_in_path "wget"; then
-    echo "Downloading $BINARY_NAME v${DOWNLOAD_TAG}"
-    wget -q "$DOWNLOAD_URL"
-  else
-    echo "Downloading $BINARY_NAME v${DOWNLOAD_TAG}"
-    curl -sL "$DOWNLOAD_URL" --output "${ASSET_NAME_COMPRESSED}"
-  fi
+  echo $DOWNLOAD_URL
 
-  echo "$BINARY_NAME v${DOWNLOAD_TAG} downloaded"
+  echo "Downloading $BINARY_NAME v${DOWNLOAD_TAG}"
+  if curl -sL "$DOWNLOAD_URL" --output "${ASSET_NAME_COMPRESSED}"; then
+    echo "$BINARY_NAME v${DOWNLOAD_TAG} downloaded"
+  else
+    echo "Error downloading $BINARY_NAME v${DOWNLOAD_TAG}"
+  fi
 
   # unpack and place the binary in the users PATH
   tar xf "$ASSET_NAME_COMPRESSED"
+  if [ "$?" -ne 0 ]; then
+    exit 1
+  fi
+
   cp "${ASSET_NAME}/bin/${BINARY_NAME}" "${BINARY_DEST}/${BINARY_NAME}"
+  if [ "$?" -ne 0 ]; then
+    exit 1
+  fi
 
   echo "rhoas has been installed succesfully to $BINARY_DEST"
   echo "Please ensure that $BINARY_DEST is on your PATH"
